@@ -1,0 +1,98 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project name="module_camera" default="compile.module.camera">
+  <dirname property="module.camera.basedir" file="${ant.file.module_camera}"/>
+  
+  <property name="module.jdk.home.camera" value="${project.jdk.home}"/>
+  <property name="module.jdk.bin.camera" value="${project.jdk.bin}"/>
+  <property name="module.jdk.classpath.camera" value="${project.jdk.classpath}"/>
+  
+  <property name="compiler.args.camera" value="-encoding UTF-8 -source 1.7 -target 1.7 ${compiler.args}"/>
+  
+  <property name="camera.output.dir" value="${module.camera.basedir}/out/production/Camera"/>
+  <property name="camera.testoutput.dir" value="${module.camera.basedir}/out/test/Camera"/>
+  
+  <path id="camera.module.bootclasspath">
+    <!-- Paths to be included in compilation bootclasspath -->
+  </path>
+  
+  <path id="camera.module.production.classpath">
+    <path refid="${module.jdk.classpath.camera}"/>
+    <path refid="library.json-20140107.classpath"/>
+    <path refid="library.sigar.classpath"/>
+    <path refid="library.netty-all-4.1.0.cr1.classpath"/>
+    <path refid="library.google-api-services-drive-v2-rev206-1.21.0.classpath"/>
+    <path refid="library.com.dropbox.core:dropbox-core-sdk:2.0-beta-7.classpath"/>
+  </path>
+  
+  <path id="camera.runtime.production.module.classpath">
+    <pathelement location="${camera.output.dir}"/>
+    <path refid="library.json-20140107.classpath"/>
+    <path refid="library.sigar.classpath"/>
+    <path refid="library.netty-all-4.1.0.cr1.classpath"/>
+    <path refid="library.google-api-services-drive-v2-rev206-1.21.0.classpath"/>
+    <path refid="library.com.dropbox.core:dropbox-core-sdk:2.0-beta-7.classpath"/>
+  </path>
+  
+  <path id="camera.module.classpath">
+    <path refid="${module.jdk.classpath.camera}"/>
+    <pathelement location="${camera.output.dir}"/>
+    <path refid="library.json-20140107.classpath"/>
+    <path refid="library.sigar.classpath"/>
+    <path refid="library.netty-all-4.1.0.cr1.classpath"/>
+    <path refid="library.google-api-services-drive-v2-rev206-1.21.0.classpath"/>
+    <path refid="library.com.dropbox.core:dropbox-core-sdk:2.0-beta-7.classpath"/>
+  </path>
+  
+  <path id="camera.runtime.module.classpath">
+    <pathelement location="${camera.testoutput.dir}"/>
+    <pathelement location="${camera.output.dir}"/>
+    <path refid="library.json-20140107.classpath"/>
+    <path refid="library.sigar.classpath"/>
+    <path refid="library.netty-all-4.1.0.cr1.classpath"/>
+    <path refid="library.google-api-services-drive-v2-rev206-1.21.0.classpath"/>
+    <path refid="library.com.dropbox.core:dropbox-core-sdk:2.0-beta-7.classpath"/>
+  </path>
+  
+  
+  <patternset id="excluded.from.module.camera">
+    <patternset refid="ignored.files"/>
+  </patternset>
+  
+  <patternset id="excluded.from.compilation.camera">
+    <patternset refid="excluded.from.module.camera"/>
+  </patternset>
+  
+  <path id="camera.module.sourcepath">
+    <dirset dir="${module.camera.basedir}">
+      <include name="src"/>
+    </dirset>
+  </path>
+  
+  
+  <target name="compile.module.camera" depends="compile.module.camera.production,compile.module.camera.tests" description="Compile module Camera"/>
+  
+  <target name="compile.module.camera.production" depends="register.custom.compilers" description="Compile module Camera; production classes">
+    <mkdir dir="${camera.output.dir}"/>
+    <javac2 destdir="${camera.output.dir}" debug="${compiler.debug}" nowarn="${compiler.generate.no.warnings}" memorymaximumsize="${compiler.max.memory}" fork="true" executable="${module.jdk.bin.camera}/javac">
+      <compilerarg line="${compiler.args.camera}"/>
+      <bootclasspath refid="camera.module.bootclasspath"/>
+      <classpath refid="camera.module.production.classpath"/>
+      <src refid="camera.module.sourcepath"/>
+      <patternset refid="excluded.from.compilation.camera"/>
+    </javac2>
+    
+    <copy todir="${camera.output.dir}">
+      <fileset dir="${module.camera.basedir}/src">
+        <patternset refid="compiler.resources"/>
+        <type type="file"/>
+      </fileset>
+    </copy>
+  </target>
+  
+  <target name="compile.module.camera.tests" depends="register.custom.compilers,compile.module.camera.production" description="compile module Camera; test classes" unless="skip.tests"/>
+  
+  <target name="clean.module.camera" description="cleanup module">
+    <delete dir="${camera.output.dir}"/>
+    <delete dir="${camera.testoutput.dir}"/>
+  </target>
+</project>
